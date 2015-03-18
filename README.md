@@ -84,7 +84,6 @@ We would like everyone to use the flowing template for the package.json file (mo
     }
   ],
   "dependencies": {
-    "dependencies": {
       "body-parser": "~1.12.0",
       "broadway": "^0.3.6",
       "cookie-parser": "~1.3.4",
@@ -105,7 +104,6 @@ We would like everyone to use the flowing template for the package.json file (mo
       "scribe-js": "^2.0.4",
       "serve-favicon": "~2.2.0"
     }
-  }
 }
 
 ```
