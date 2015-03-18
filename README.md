@@ -9,8 +9,6 @@ This Git Repository will be used to collaborate on the Buzz Space mini project.
 Our buzz space name is: D3  -  discuss , debate & deliberate ....
 
 ## Project time-line
-
-### Main Dates
 - **22 March 11:59PM**: __Core functionality of module complete so integration for demo can begin__ 
 - **27 March**: Mid-Implementation Demo
 - **TBA probably in middle of the holiday**: Module complete & final integration
