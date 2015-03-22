@@ -43,40 +43,37 @@ Authorized.prototype.isAuthorized = function() {
 
     //Testing if database connection was successful
     var db = mongoose.connection;
-    db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', function () {
-        connected = true;
-    });
+    if (db != null)
+	{
+		connected = true;
+	}
 
     if (connected == true)
     {
-        var Restriction = mongoose.model('Restriction', restrictions);
-
-        Restriction.find({role : this.role,
-                          service : this.service,
-                          buzzSpace : this.buzzSpace}, function (err, Restriction)
-			  {
-				try
-				{
-					if (Restriction != null)
-					{
-						//throw user unauthorized exception
-						throw{
-							name: "Unauthorized Error",
-							message: "Error detected. Could not find specified restriction.",
-							toString:    function(){return this.name + ": " + this.message;} 
-						}
-					}
-					else
-					{
-						return true;
-					}
-				}
-				catch(e)
-				{
-					alert(e.toString);					
-				}
-					})
+	//Model needs to be imported from the defining file. So if possible, the file that created the database needs to export
+	//the model so that this class can use it. "dbconfig" was used here only as a temporary fix
+	var file = require("./dbconfig");
+	var Restriction = file.restrict;
+	Restriction.findOne({buzzSpace : [this.buzzSpace], role: [this.getRole()], servicesID: [this.getService()]}, function(err, rest){
+		if (err)console.log("Error: " + err);
+		else if (rest == null)
+		{
+			return true;
+		}
+		else
+		{
+			//throw user unauthorized exception
+			throw{
+			name: "Unauthorized Error",
+			message: "User is unauthorized to use this service.",
+			toString:    function(){return this.name + ": " + this.message;}
+                }
+            }
+        });
+    }
+    else
+    {
+	    console.log("Could not establish a connection to the database.");
     }
 
 };
@@ -84,7 +81,7 @@ Authorized.prototype.isAuthorized = function() {
 //--------------------------------------------------------------------------//
 
 var service;
-var role;	//Need to define variables
+var role;	//Need to define variables. must be database objects
 var buzzspace;
 
 //Creating class instance

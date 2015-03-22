@@ -1,0 +1,41 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "main": {"Authorized.js", "addAuthorization.js"},
+   "description": "Package for adding and checking authorization on service requests",
+  "dependencies": {
+    "mongoose": "^3.8.25"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BuzzSpaceB/Module"
+  },
+  "bugs": {
+    "url": "https://github.com/BuzzSpaceB/Module/issues"
+  },
+  "homepage": "https://github.com/BuzzSpaceB/Module",
+  "contributors": [
+    {
+      "name": "Sphelele Malo",
+      "email": "ssmalo2@gmail.com"
+    },
+    {
+      "name": "Group Member Two",
+      "email": "email@group.com"
+    },
+    {
+      "name": "Group member n",
+      "email": "n@email.com"
+    },
+    {
+      "name": "Group member n",
+      "email": "n@email.com"
+    }
+  ],
+}

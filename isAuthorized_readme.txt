@@ -14,10 +14,12 @@
 *Finally the class has a main function called isAuthorized.
 isAuthorized is a function contained in the class Authorization. 
 The funtion returns a value of type boolean.
-The aim of the funtion is to determine whether the user has the privileges to make use of the requested service.
+The aim of the function is to determine whether the user has the privileges to make use of the requested service.
 
 *Function prototype: Authorized.prototype.isAuthorized = function() { ... code ... }
 The function does not take any parameters as it uses the variables declared inside the class to achieve its goal.
+This means that in order to use it, an object of type Authorized must be created and initialised
+with the database objects service, role and buzzspace.
 
 *Pre-conditions: 
 	-The user, within a specific buzzspace must request or attempt to use a specific service.
@@ -34,6 +36,6 @@ The function does not take any parameters as it uses the variables declared insi
 1. isAuthorized() first finds, tests, connects and open the database that contains all the data regarding services, statuses and other information about the system.
 2. If the function cannot connect to the database an error is thrown.
 3. If a connection is established then the function reads the database and attempts to find the record with the matching data as the service, role and buzzspace variables.
-4.If no such record is found or a restriction is not found then an error is thrown alerting the user that they do not have the priviledge to perform the desired action.
-5. Otherwise True is returned and the user is authorized to perform the action.
+4.If no such record is found or a restriction is not found it means no restriction exists and so the user may use the service; ie function returns true.
+5. Otherwise a "User Not Authorized" Exception is thrown and the user is denied access to that service.
 	
