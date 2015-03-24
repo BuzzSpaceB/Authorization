@@ -103,13 +103,13 @@
                          }
                          else //updates if this restriction exists for a buzzSpace and service
                          {
-                            console.log("this restriction already exists, updating now.");
-                            Restriction.findOne({ 'id': newID}, function (err, doc){
-                                 doc.minimumRole = minRole;
-                                 doc.minimumStatusPoints = minStatusPoints;
-                                 doc.save();
-                                console.log("updated");
-                             });
+                         //   console.log("this restriction already exists, updating now.");
+                         //   Restriction.findOne({ 'id': newID}, function (err, doc){
+                         //        doc.minimumRole = minRole;
+                         //        doc.minimumStatusPoints = minStatusPoints;
+                         //        doc.save();
+                         // });
+                             console.log("The restriction for this role in this BuzzSpace already exists."); //Pre-conditon - authorization restriction for that role and buzzSpace don't exist.
                          }
                      });
 
