@@ -83,7 +83,7 @@
          function addAuthorizationRestrictions(userRole,buzzspace,serv,minRole,minStatusPoints)
          {
              //Calling is Authorized to check if the user is of the minimum role(Admin in this case) to use this service.
-             if (isAuthorized())  // addAuthorizationRestrictions is the service being used by the user.
+             if (isAuthorized(/*paramaters will need to be added here after isAuthorized is changed...*/))  // addAuthorizationRestrictions is the service being used by the user.
              {
                  //console.log(buzzspace+" "+serv);
                  //query documents
@@ -101,7 +101,7 @@
                                  if (err) return console.error(err)});
                              console.log("inserted");
                          }
-                         else //updates if this restriction exists for a buzzSpace and service
+                         else //updates if this restriction exists for a buzzSpace and service (is not needed since the the pre-condition isn't met.) 
                          {
                          //   console.log("this restriction already exists, updating now.");
                          //   Restriction.findOne({ 'id': newID}, function (err, doc){
