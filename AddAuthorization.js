@@ -5,6 +5,7 @@
    //Connecting to the database
     var mongoose = require("mongoose");
     mongoose.connect('mongodb://localhost/test');
+
     //var file = require("./dbconfig.js");
 
     //testing to see if connection was successfull.
@@ -50,6 +51,9 @@
 
          //compile the schema to allow objects to be made of it
          var Restriction = mongoose.model('Restriction', restrictions);
+         module.exports.mongoose = mongoose;
+         module.exports.restrict = Restriction;
+         var authorization = require("./Authorized.js");
          //...Creating models and database schemas...(ends here)
 
          //Getter functions for models (not really needed atm since I couldn't externalise the AddAuthor. Function)
@@ -70,58 +74,79 @@
              return Service;
          }*/
 
+         //get Authorized object...
+         var Authorized = authorization.Authorized;
+
 
          //invoke the function call of addAuthorizationRestrictions
-         var user = new Role({ID:3,Name:"User"});
-         var comment = new Service({ID:"2",details:"Commenting on a post."});
+         var user = new Role({ID:3,Name:"Admin"});
+         var person = new Role({ID:2,Name:"user"});
+         var comment = new Service({ID:"2",details:"addAuthorizationRestrictions"});
          var buzz = new BuzzSpace({id:"2",name:"Programming Languages",code:"COS333"});
-         addAuthorizationRestrictions(user, buzz, comment, user, 11);
+
+         var Auth = new Authorized(user,comment,buzz); //creates the authorized object to call isAuthorized with.
+
+         addAuthorizationRestrictions(user, buzz, comment, person, 11);// calling addAuthorizationRestricions.
+
          console.log("Success");
 
 
          //function to addAuthorizationRestricions
          function addAuthorizationRestrictions(userRole,buzzspace,serv,minRole,minStatusPoints)
          {
-             //Calling is Authorized to check if the user is of the minimum role(Admin in this case) to use this service.
-             if (isAuthorized(/*paramaters will need to be added here after isAuthorized is changed...*/))  // addAuthorizationRestrictions is the service being used by the user.
-             {
-                 //console.log(buzzspace+" "+serv);
-                 //query documents
+             /*Calling is Authorized to check if the user is of the
+             minimum role(Admin in this case) to use this service*/
 
-                 //this id will be unique for each buzzSpace and Service
-                 var newID = buzz.code+serv.ID; //For now this will generate the id for restrictions...
+             /*Using a call back function so that this function
+             doesn't go on ahead before it is authorized to do so...*/
+             Auth.isAuthorized(function(val){
 
-                     Restriction.find({ 'id': newID},function (err, docs)
-                     {
+                 if (val == true)  // addAuthorizationRestrictions is the service being used by the user.
+                 {
+
+                     //console.log(buzzspace+" "+serv);
+                     //query documents
+
+                     //this id will be unique for each buzzSpace and Service
+                     var newID = buzz.code + serv.ID; //For now this will generate the id for restrictions...
+
+                     Restriction.find({'id': newID}, function (err, docs) {
                          //console.log(docs.toString());
-                         if (docs.toString() == "")
-                         {
-                             var rest = new Restriction({'id':newID,'buzzSpace':buzzspace,'servicesID':serv,'minimumRole':minRole,'minimumStatusPoints':minStatusPoints});
+                         if (docs.toString() == "") {
+                             var rest = new Restriction({
+                                 'id': newID,
+                                 'buzzSpace': buzzspace,
+                                 'servicesID': serv,
+                                 'minimumRole': minRole,
+                                 'minimumStatusPoints': minStatusPoints
+                             });
                              rest.save(function (err, t) {
-                                 if (err) return console.error(err)});
+                                 if (err) return console.error(err)
+                             });
                              console.log("inserted");
                          }
                          else //updates if this restriction exists for a buzzSpace and service (is not needed since the the pre-condition isn't met.) 
                          {
-                         //   console.log("this restriction already exists, updating now.");
-                         //   Restriction.findOne({ 'id': newID}, function (err, doc){
-                         //        doc.minimumRole = minRole;
-                         //        doc.minimumStatusPoints = minStatusPoints;
-                         //        doc.save();
-                         // });
+                             //   console.log("this restriction already exists, updating now.");
+                             //   Restriction.findOne({ 'id': newID}, function (err, doc){
+                             //        doc.minimumRole = minRole;
+                             //        doc.minimumStatusPoints = minStatusPoints;
+                             //        doc.save();
+                             // });
                              console.log("The restriction for this role in this BuzzSpace already exists."); //Pre-conditon - authorization restriction for that role and buzzSpace don't exist.
                          }
                      });
 
-             }
-             else
-             {
-                 console.log("The user isn't an Admin and doesn't have the authority to use this service.");
-             }
+                 }
+                 else {
+                     console.log("The user isn't an Admin and doesn't have the authority to use this service.");
+                 }
+             });
+
          }
 
          //For testing purposes a dummy isAuthorized function
-         function isAuthorized(){return true;}
+         //function isAuthorized(){return true;}
 
 });
 

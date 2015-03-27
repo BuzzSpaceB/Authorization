@@ -1,20 +1,14 @@
 //------------------------Defining Class-----------------------------------//
 function Authorized(sService, sRole, sbuzzspace)
 {
-	//Variables
-	this.service = function(sService) 
-	{
-		return sService;
-	};
-	this.role = function(sRole) 
-	{
-		return sRole;
-	};
-	this.buzzspace =  function(sbuzzspace) 
-	{
-		return sbuzzspace;
-	};
+	//Variables (I changed it from functions to normal variables didn't work otherwise)
+	this.service = sService;
+	this.role = sRole;
+	this.buzzspace =  sbuzzspace;
+
+    console.log(this.service.ID);
 }
+module.exports.Authorized = Authorized;
 //--------------------------------------------------------------------------//
 //------------------------Adding functions--------------------------------//
 
@@ -34,14 +28,18 @@ Authorized.prototype.getBuzzspace = function() {
 };
 
 //Main Function
-Authorized.prototype.isAuthorized = function() {
+Authorized.prototype.isAuthorized = function(_callBack) {
 
     var connected = false;
     //Connecting to the database
-    var mongoose = require("mongoose");
-    mongoose.connect('mongodb://localhost/test');
+    //var mongoose = require("mongoose");
+    //mongoose.connect('mongodb://localhost/test');
 
     //Testing if database connection was successful
+    var file = require("./AddAuthorization.js");
+    var Restriction = file.restrict;
+    var mongoose = file.mongoose;
+
     var db = mongoose.connection;
     if (db != null)
 	{
@@ -52,13 +50,20 @@ Authorized.prototype.isAuthorized = function() {
     {
 	//Model needs to be imported from the defining file. So if possible, the file that created the database needs to export
 	//the model so that this class can use it. "dbconfig" was used here only as a temporary fix
-	var file = require("./dbconfig");
-	var Restriction = file.restrict;
-	Restriction.findOne({buzzSpace : [this.buzzSpace], role: [this.getRole()], servicesID: [this.getService()]}, function(err, rest){
+	//var file = require("./dbconfig");
+
+    //console.log(this.buzzspace);
+
+    //took out the testing for a role otherwise an exception is thrown because the query is too large,
+    //have a look and try to fix this query please guys.
+	Restriction.findOne({buzzSpace : [this.buzzSpace], servicesID: [this.service]}, function(err, rest){
 		if (err)console.log("Error: " + err);
 		else if (rest == null)
 		{
-			return true;
+            console.log("here");
+            _callBack(true);
+			return ;
+
 		}
 		else
 		{
@@ -85,7 +90,7 @@ var role;	//Need to define variables. must be database objects
 var buzzspace;
 
 //Creating class instance
-var authorized = new Authorized(service, role, buzzspace); //Need to define parameters
+//var authorized = new Authorized(service, role, buzzspace); //Need to define parameters
 
-var result;
-result = authorized.isAuthorized();
+//var result;
+//result = authorized.isAuthorized();

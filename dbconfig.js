@@ -16,7 +16,7 @@ var Roles = new mongoose.Schema({
 var Role = mongoose.model('Role', Roles);
 
 //creating new role
-var admin = new Role({ID : 1, Name : 'administrator'});
+var admin = new Role({ID : 1, Name : 'Admin'});
 
 //persisting role to database
 admin.save(function (err, fluffy) {
@@ -45,6 +45,7 @@ var services = new mongoose.Schema({
     details: String
 })
 module.exports.restrict = Restriction;
+
 //compile the schema to allow objects to be made of it
 var Service = mongoose.model('Service', services);
 
