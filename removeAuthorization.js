@@ -23,8 +23,9 @@ removeAuthorization.prototype.setID = function(authorizedID)
 };
 
 //Main Function
-removeAuthorization.prototype.remove = function() 
+removeAuthorization.prototype.remove = function(ID)
 {
+    this.setID(ID);
 	//Initial connection status set to false
 	var connected = false;
 	
@@ -65,28 +66,29 @@ removeAuthorization.prototype.remove = function()
 
 	if (connected == true)
 	{
-	
-	Restriction.find({'ID': this.authID}, function (err, docs) 
+
+	Restriction.find({'ID': ID}, function (err, docs)
 	{
 		//Check to see that restriction exists
-		if (docs.toString() == "") 
+		if (docs.toString() == "")
 		{
 			console.log("The restriction for this role in this BuzzSpace does not exist.");
 		}
 		//restriction exists
-		else 
+		else
 		{
 			//Defining parameters to update deleted field
-			var query = { ID: this.authID };
+			var query = { ID: ID };
 			var options = { multi: false };
 			var update =  { deleted: true };
-			
+
 			Restriction.update(query, { $set: update}, options , callback);
-			
-			function callback (error, numAffected) 
+
+			function callback (error, numAffected)
 			{
 			  // numAffected is the number of updated documents - should be 1
-			}			
+                console.log("Num Affected: " + numAffected);
+			}
 			console.log("removed");
 		}
 	});
@@ -100,7 +102,7 @@ removeAuthorization.prototype.remove = function()
 };
 
 //--------------------------------------------------------------------------//
-
+module.exports.remove = removeAuthorization;
 var id;
 
 //Creating class instance
