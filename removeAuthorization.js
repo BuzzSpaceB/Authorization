@@ -31,7 +31,7 @@ removeAuthorization.prototype.remove = function(ID)
 	
 	//Connecting to the database
 	var mongoose = require("mongoose");
-	mongoose.connect('mongodb://localhost/test');
+	mongoose.connect('mongodb://localhost/BuzzDB');
 
 	//Testing if database connection was successful
 	
@@ -66,9 +66,10 @@ removeAuthorization.prototype.remove = function(ID)
 
 	if (connected == true)
 	{
-
-	Restriction.find({'ID': ID}, function (err, docs)
+    console.log("ID : "+ID);
+    Restriction.find({'ID': ID}, function (err, docs)
 	{
+
 		//Check to see that restriction exists
 		if (docs.toString() == "")
 		{

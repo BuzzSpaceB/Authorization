@@ -39,11 +39,11 @@ function checkConnection(){
 //Actual Function - get all the restrictions for a specific BuzzSpace.
 function getAut(bID){
     mongoose = require("mongoose");
-    mongoose.connect('mongodb://localhost/test');
+    mongoose.connect('mongodb://localhost/BuzzDB');
     var connect =  checkConnection();
 
     //Testing Purposes - Can be removed later.
-    var restrictions2 = new mongoose.Schema(
+    var restrictions = new mongoose.Schema(
         {
             ID: String,
             buzzspace_id: [mongoose.Schema.Types.ObjectID],
@@ -57,7 +57,7 @@ function getAut(bID){
     if (connect == true) {
         setID(bID);
 
-        var Restriction2 = mongoose.model('Restriction', restrictions2);
+        var Restriction2 = mongoose.model('Restriction', restrictions);
         //Looks for a BuzzSpace with the matching ID AND deleted = false
         Restriction2.find({'buzzspace_id': bID,'deleted':false}, function (err, docs)
         {

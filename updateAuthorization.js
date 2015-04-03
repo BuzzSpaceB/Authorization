@@ -51,7 +51,7 @@ function updateAuthorization(aID, rl, sP){
     var connect =  checkConnection();
 
     //Testing Purposes - Can be removed later.
-    var restrictions3 = new mongoose.Schema(
+    var restrictions = new mongoose.Schema(
         {
             ID: String,
             buzzspace_id: [mongoose.Schema.Types.ObjectID],
@@ -65,7 +65,7 @@ function updateAuthorization(aID, rl, sP){
     if (connect == true) {
         setNewParameters(aID, rl, sP);
 
-        var Restriction3 = mongoose.model('Restriction', restrictions3);
+        var Restriction3 = mongoose.model('Restriction', restrictions);
         //Looks for a User with the matching ID AND deleted = false
         // Find didn't work with the save function. So it only affects the first found one.
         //Alt try removing save and use find.
