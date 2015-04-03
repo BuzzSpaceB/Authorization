@@ -39,7 +39,7 @@ function checkConnection(){
 //Actual Function - get all the restrictions for a specific BuzzSpace.
 function getAut(bID){
     mongoose = require("mongoose");
-    mongoose.connect('mongodb://localhost/BuzzDB');
+    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
     var connect =  checkConnection();
 
     //Testing Purposes - Can be removed later.

@@ -31,7 +31,7 @@ removeAuthorization.prototype.remove = function(ID)
 	
 	//Connecting to the database
 	var mongoose = require("mongoose");
-	mongoose.connect('mongodb://localhost/BuzzDB');
+    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
 
 	//Testing if database connection was successful
 	

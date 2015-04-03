@@ -34,7 +34,7 @@ Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod,
     var connected = false;
     //Connecting to the database
     //var mongoose = require("mongoose");
-    //mongoose.connect('mongodb://localhost/test');
+    //mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
 
     //Testing if database connection was successful
     var file = require("./AddAuthorization.js");

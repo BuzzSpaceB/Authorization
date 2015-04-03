@@ -47,7 +47,7 @@ function checkConnection(){
 //Actual Function - update Authorization
 function updateAuthorization(aID, rl, sP){
     mongoose = require("mongoose");
-    mongoose.connect('mongodb://localhost/test');
+    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
     var connect =  checkConnection();
 
     //Testing Purposes - Can be removed later.
