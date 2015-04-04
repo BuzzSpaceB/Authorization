@@ -1,7 +1,7 @@
 {
   "name": "application-name",
   "version": "0.0.1",
-  "main": {"Authorized.js", "addAuthorization.js"},
+  "main": {"Authorized.js"},//addAuthorization.js
    "description": "Package for adding and checking authorization on service requests",
   "dependencies": {
     "mongoose": "^3.8.25"
