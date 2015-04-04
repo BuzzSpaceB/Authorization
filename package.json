@@ -1,5 +1,5 @@
 {
-  "name": "application-name",
+  "name": "Authorization",
   "version": "0.0.1",
   "main": "Authorized.js",
   "description": "Package for adding and checking authorization on service requests",
