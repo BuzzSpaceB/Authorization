@@ -4,7 +4,7 @@
 
    //Connecting to the database
 var mongoose = require("mongoose");
-mongoose.connect('mongodb://localhost/BuzzDB');
+mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
 
     //testing to see if connection was successfull.
      var db = mongoose.connection;
@@ -53,15 +53,16 @@ mongoose.connect('mongodb://localhost/BuzzDB');
              //this id will be unique for each buzzSpace and Service
              var newID = buzzspaceID + ServiceID; //For now this will generate the id for restrictions...
 
-             Restriction.find({'id': newID}, function (err, docs) {
-                 if (docs.toString() == "") {
+             Restriction.find({'ID': newID}, function (err, docs) {
+                 if (docs.toString() == "")
+                 {
                      var rest = new Restriction({
                          'ID': newID,
                          'buzzspace_id': buzzspaceID,
                          'servicesID': ServiceID,
                          'minimumRole': Role,
                          'minimumStatusPoints': statusPoints,
-			 'deleted' : false
+                         'deleted' : false
                      });
                      rest.save(function (err, t) {
                          if (err) return console.error(err)
