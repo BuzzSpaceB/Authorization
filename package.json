@@ -2,9 +2,9 @@
   "name": "application-name",
   "version": "0.0.1",
   "main": "Authorized.js",
-   "description": "Package for adding and checking authorization on service requests",
+  "description": "Package for adding and checking authorization on service requests",
   "dependencies": {
-    "mongoose": "^3.8.25"
+    "mongoose": "^3.9.7"
   },
   "devDependencies": {},
   "scripts": {
