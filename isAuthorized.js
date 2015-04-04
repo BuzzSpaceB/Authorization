@@ -1,45 +1,24 @@
-//------------------------Defining Class-----------------------------------//
-function Authorized(sService, sRole, sbuzzspace)
-{
-	//Variables (I changed it from functions to normal variables didn't work otherwise)
-	this.service = sService;
-	this.role = sRole;
-	this.buzzspace =  sbuzzspace;
+var mongoose = require("mongoose");
 
-    console.log(this.service.ID);
-}
-module.exports.Authorized = Authorized;
-//--------------------------------------------------------------------------//
-//------------------------Adding functions--------------------------------//
-
-//Helper Function
-Authorized.prototype.getService = function() {
-	return this.service;
-};
-
-//Helper Function
-Authorized.prototype.getRole = function() {
-	return this.role;
-};
-
-//Helper Function
-Authorized.prototype.getBuzzspace = function() {
-	return this.buzzspace;
-};
-
-//Main Function
-Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod, userID)
+function isAuthorized(moduleID, objectName, objectMethod, userID)
 {
 
     var connected = false;
     //Connecting to the database
-    //var mongoose = require("mongoose");
-    //mongoose.connect('mongodb://localhost/test');
+
+
 
     //Testing if database connection was successful
-    var file = require("./AddAuthorization.js");
-    var Restriction = file.restrict;
-    var mongoose = file.mongoose;
+    var restrictions = new mongoose.Schema({
+        ID: String,
+        buzzspace_id: [mongoose.Schema.Types.ObjectID],
+        servicesID: [mongoose.Schema.Types.ObjectID],
+        minimumRole: [mongoose.Schema.Types.ObjectID],
+        minimumStatusPoints: Number,
+        deleted: Boolean
+    });
+    var Restriction = mongoose.model('Restriction', restrictions);
+    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
 
     var db = mongoose.connection;
     if (db != null)
@@ -50,7 +29,7 @@ Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod,
     if (connected == true)
     {
         var ServiceSchema = mongoose.Schema({
-            service_id                  : ObjectId,
+            service_id                  : String,
             service_name                : String, /*Fully qualified service name */
             method_name                 : String,
             deleted                     : Boolean
@@ -61,30 +40,35 @@ Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod,
             name            : String            /* The name of the role, as from LDAP */
         });
 
-        var Role = new mongoose.model('Role', RoleSchema);
-        Service = new mongoose.model('Service', ServiceSchema);
+        var Role = mongoose.model('Roles', RoleSchema);
+        var Service = mongoose.model('Services', ServiceSchema);
         var UserSchema = mongoose.Schema({
             user_id             : String,           /* PK, this is the user_id as in LDAP i.e student number */
             username            : String,           /* The user's preferred username, like first name */
             roles               : [{role_name : [String], module: [String]}],      /* Array of Roles & modules of the user as from LDAP */
             modules      		: [String],          /* Array of Modules that is active for the user */
-            post_count			: Number,
-            statusPoints        : Number
+            post_count			: Number
+           // statusPoints        : Number
         });
 
-        User = new mongoose.model('User', UserSchema);
+        var User = mongoose.model('user', UserSchema);
 
         //find the user object from the userID
-        User.findOne({user_id: userID}, function(err, _user){
-            if (err){console.log(err);}
+        User.findOne({user_id : userID}, function(err, _user){
+            if (err){console.log("fw earwefew:: " + err);}
+            else if (_user == null)
+            {
+                throw{message : 'Could not find User in database'};
+            }
             else
             {
+                console.log("Found User with ID: "+_user.user_id);
                 for (var  i = 0;i < _user.roles.length; i++ )
                 {
                     if (_user.roles[i].module == moduleID) //User is registered for this buzz module
                     {
-                        var userRole = user.roles[i].role_name;
-
+                        var userRole = _user.roles[i].role_name;
+                        console.log("User Role is: " + userRole + " for this module");
                         //find the service object for the service being requested
                         Service.findOne({method_name: objectMethod, service_name: objectName}, function (err, result)
                         {
@@ -92,9 +76,13 @@ Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod,
                             {
                                 console.log("Error: " + err);
                             }
-
+                            else if (result == null)
+                            {
+                                throw{message: 'Could not locate Service in database'};
+                            }
                             else
                             {
+                                console.log("Found requested service object");
                                 var newID = moduleID + result.service_id; //create the Restriction objects ID
 
                                 //find the restriction object for the requested service
@@ -106,10 +94,16 @@ Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod,
                                     }
                                     else
                                     {
+                                        console.log("Restriction found. Analyzing...");
                                         //find the restrictions minimumRole object
                                         Role.findOne({_id : rest.minimumRole}, function (err, rol){
                                             if (err){console.log("Error: " + err);}
-
+                                            else if (rol.toString() == "")
+                                            {
+                                                {
+                                                    throw{message : 'Could not find Role in database'};
+                                                }
+                                            }
                                             else
                                                 {
                                                     //test user role against restriction minimum role to see if user is authorised
@@ -196,24 +190,12 @@ Authorized.prototype.isAuthorized = function(moduleID, objectName, objectMethod,
                 }
             }
         });
-
-
     }
     else
     {
 	    console.log("Could not establish a connection to the database.");
     }
-
+   // mongoose.disconnect();
 };
 
-//--------------------------------------------------------------------------//
-
-var service;
-var role;	//Need to define variables. must be database objects
-var buzzspace;
-
-//Creating class instance
-//var authorized = new Authorized(service, role, buzzspace); //Need to define parameters
-
-//var result;
-//result = authorized.isAuthorized();
+exports.isAuthorised = isAuthorized;
