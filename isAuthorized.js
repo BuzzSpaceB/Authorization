@@ -28,17 +28,7 @@ function isAuthorized(moduleID, objectName, objectMethod, userID)
 
     if (connected == true)
     {
-        var ServiceSchema = mongoose.Schema({
-            service_id                  : String,
-            service_name                : String, /*Fully qualified service name */
-            method_name                 : String,
-            deleted                     : Boolean
-        });
 
-        var RoleSchema = mongoose.Schema({
-            role_id         : String,           /* The id of the role */
-            name            : String            /* The name of the role, as from LDAP */
-        });
 
         var Role = mongoose.model('Roles', RoleSchema);
         var Service = mongoose.model('Services', ServiceSchema);
@@ -47,8 +37,8 @@ function isAuthorized(moduleID, objectName, objectMethod, userID)
             username            : String,           /* The user's preferred username, like first name */
             roles               : [{role_name : [String], module: [String]}],      /* Array of Roles & modules of the user as from LDAP */
             modules      		: [String],          /* Array of Modules that is active for the user */
-            post_count			: Number
-           // statusPoints        : Number
+            post_count			: Number,
+            statusPoints        : Number
         });
 
         var User = mongoose.model('user', UserSchema);
