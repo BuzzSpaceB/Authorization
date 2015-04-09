@@ -4,6 +4,8 @@
 /**
  * Created by Kale-ab on 2015-04-01.
  */
+
+//    TODO Use templates provided
 var authID;
 var rol;
 var statPoints;
@@ -45,6 +47,12 @@ function checkConnection(){
 }
 
 //Actual Function - update Authorization
+//TODO throw errors for errors(Don't console log them)
+//TODO update parameteres to : buzzspaceName, statusPoints, role, objectName, objectMethod, newRole, newStatusPoints
+//TODO check if objects all exists && check if restriction exists. Throw relevant errors.
+//TODO remember if deleted there is a flag.
+//TODO use databasestuff schemas
+//TODO use helper functions where possible(Simpilify reading of code);
 function updateAuthorization(aID, rl, sP){
     mongoose = require("mongoose");
     mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");

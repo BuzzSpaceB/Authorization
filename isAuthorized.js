@@ -1,5 +1,11 @@
 var mongoose = require("mongoose");
-
+//TODO use provided template
+//TODO throw errors for errors(Don't console log them)
+//TODO update parameteres to : buzzspaceName, objectName, objectMethod, userID, statusPoints
+//TODO check if objects all exists && check if restriction exists. Throw relevant errors.
+//TODO use databasestuff schemas
+//TODO use helper functions where possible(Simpilify reading of code) -> especially with multiple if statements. Rather call a helper functions that either returns a value or throws an error
+//TODO simplification of code.
 function isAuthorized(moduleID, objectName, objectMethod, userID)
 {
 

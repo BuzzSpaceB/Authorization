@@ -1,3 +1,5 @@
+//TODO use template class
+
 //------------------------Defining Class-----------------------------------//
 function removeAuthorization(authorizedID)
 {
@@ -23,6 +25,11 @@ removeAuthorization.prototype.setID = function(authorizedID)
 };
 
 //Main Function
+//TODO update the authorization delete value to false if not already false. If false ignore.
+//TODO update the parameters to: (buzzspaceName, objectName, objectMethod)
+//TODO throw errors for instead of console logging errors. Console log regular outputs.
+//TODO use database stuff schemas
+//TODO remember if deleted there is a flag.
 removeAuthorization.prototype.remove = function(ID)
 {
     this.setID(ID);
@@ -71,6 +78,7 @@ removeAuthorization.prototype.remove = function(ID)
 	{
 
 		//Check to see that restriction exists
+		//TODO throw an error instead of loggin
 		if (docs.toString() == "")
 		{
 			console.log("The restriction for this role in this BuzzSpace does not exist.");

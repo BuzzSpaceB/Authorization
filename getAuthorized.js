@@ -2,7 +2,7 @@
  * Created by Kale-ab on 2015-04-01.
  */
 
-
+//TODO Use the template class
 
 // Defining the class
 function getAuthorization(buzzSpaceID)
@@ -37,11 +37,17 @@ function checkConnection(){
 }
 
 //Actual Function - get all the restrictions for a specific BuzzSpace.
+//TODO throw errors for errors(Don't console log them)
+//TODO check if objects all exists && check if restriction exists. Throw relevant errors.
+//TODO use databasestuff schemas
+//TODO use helper functions where possible(Simpilify reading of code);
+//TODO remember if deleted there is a flag.
 function getAut(bID){
+    //TODO create connect helper function
     mongoose = require("mongoose");
     mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
     var connect =  checkConnection();
-
+    //TODO use database stuff for schemas
     //Testing Purposes - Can be removed later.
     var restrictions = new mongoose.Schema(
         {
@@ -53,7 +59,7 @@ function getAut(bID){
             deleted: Boolean
         });
     //console.log("connect");
-
+    //TODO check if database exists
     if (connect == true) {
         setID(bID);
 
@@ -62,6 +68,7 @@ function getAut(bID){
         Restriction2.find({'buzzspace_id': bID,'deleted':false}, function (err, docs)
         {
             //if (err) return console.error(err);
+            //TODO throw an error instead of console logging
             if (docs.toString() == "")
             {
                 console.log("A buzzSpace with that Specified ID doesnt exist.");
