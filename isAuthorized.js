@@ -6,6 +6,7 @@ var mongoose = require("mongoose");
 //TODO use databasestuff schemas
 //TODO use helper functions where possible(Simpilify reading of code) -> especially with multiple if statements. Rather call a helper functions that either returns a value or throws an error
 //TODO simplification of code.
+//TODO-Trevor I will be updating the schema to include a services table as well as providing functionality to check where roles rank. If this has not been done and you would like to test. GET ON MY CASE. Won't take me longer than 20 mins.
 function isAuthorized(moduleID, objectName, objectMethod, userID)
 {
 
