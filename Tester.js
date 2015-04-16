@@ -31,21 +31,21 @@ function main ()
         'deleted': false
     });*/
 
-    //Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,10);
-   // Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f247',role1,15);
-   //Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f243',role1,9);
+    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,10);
+    Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f247',role1,15);
+    Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f243',role1,9);
 
     //buzzSpace doesn't exist exception
-    //Auth.addAuthorizationRestrictions("COS302",'552fd20b05ab44fc2574f245',role1,10);
+    Auth.addAuthorizationRestrictions("COS302",'552fd20b05ab44fc2574f245',role1,10);
 
     //Service Doesn't exist exception
-    //Auth.addAuthorizationRestrictions("COS332",'552323d20b05ab44fc2574f2',role1,10);
+    Auth.addAuthorizationRestrictions("COS332",'552323d20b05ab44fc2574f2',role1,10);
 
     //invalid role exception
-    //Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245','552fd20b05ab44fc2574f243',10);
+    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245','552fd20b05ab44fc2574f243',10);
 
     //invalid statuspoints exception
-   //Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,-1);
+    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,-1);
 
 }
 

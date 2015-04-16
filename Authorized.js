@@ -436,12 +436,6 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                     });
 
 
-
-
-
-
-
-
                 }
 
             if (pretests())
