@@ -31,7 +31,7 @@ function main ()
         'deleted': false
     });*/
 
-    //Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,10);
+    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,10);
     Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f247',role1,15);
     Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f243',role1,9);
 

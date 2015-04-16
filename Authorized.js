@@ -357,18 +357,20 @@ exports.isAuthorized = function isAuthorized(authorizedID, role, statusPoints)
 
 //TODO Remember to check if the deleted field is true
 
+
+
 exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buzzspaceID, ServiceID, role, statusPoints)
 {
     var mongoose = require("mongoose");
-    //Connecting to the database
+//Connecting to the database
     function con(database) { // Connection helper function
+
         mongoose.connect(database);
         return mongoose.connection;
     }
-
     var dbAddress = "mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib";
     var db = con(dbAddress);
-    try {
+
         if (db != null) //check if connection succeeded
         {
 
@@ -443,8 +445,9 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                     });
                     rest.save(function (err, t) {
                         if (err) return console.error(err)
+
                     });
-                    console.log("inserted");
+
 
                 }
                 else //restriction already exists
@@ -488,11 +491,7 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                 }
             }
         }
-    }
-    finally
-    {
-        mongoose.connection.close();
-    }
+
 }
 
 //exports.addAuthorizationRestrictions = addAuthorizationRestrictions;
