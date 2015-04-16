@@ -109,10 +109,6 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
 			{
 				if (_Res.deleted == false)
 				{
-					
-				}
-				else
-				{
 					//Defining parameters to update deleted field
 					var query = { restriction_id: restrictionID };
 					var options = { multi: false };
@@ -124,7 +120,11 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
 					{
 						// numAffected is the number of updated documents - should be 1
 						//console.log("Num Affected: " + numAffected);
-					}
+					}					
+				}
+				else
+				{
+					
 				}				
 			}
 		}		
