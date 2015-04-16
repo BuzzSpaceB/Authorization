@@ -4,12 +4,6 @@
  * @version 0.2
  */
 
-//TODO recreate class use template class provided
-
-
-
-
-
 /**
  * Checks where a user is authorised to use a specified service on a specific buzzspace.
  * @param {ObjectID} buzzspaceID -  ID of the buzz space for which  a restriction is being added.
@@ -18,9 +12,14 @@
  * @param {ObjectID} ServiceID - The ID of the Service to add the restriction to.
  * @throws {Error} Could not connect to the database
  * @throws {Error} Restriction for the buzzSpace already exists
+ * @throws {Error} BuzzSpace doesn't exist
+ * @throws {Error} Service doesn't exist
+ * @throws {Error} Role doesn't exist/is invalid
+ * @throws {Error} Minimum StatusPoint is invalid
  */
 
-exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buzzspaceID, statusPoints, Role, ServiceID)
+//TODO Remember to check if the deleted field is true
+exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buzzspaceID, ServiceID, role, statusPoints)
 {
     var mongoose = require("mongoose");
     //Connecting to the database
@@ -34,80 +33,111 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 
     if (db != null) //check if connection succeeded
     {
-        var Roles = new mongoose.Schema({
-            ID: Number,
-            Name: String
+
+        BuzzSpace.find({'module_id': buzzspaceID}, function (err, docs) {
+            if (docs.toString() == "") //Check if the Service exists
+            {
+                throw{
+                    name: "BuzzSpace doesn't exist",
+                    message: "The selected buzzSpace doesn't exist",
+                    toString: function () {
+                        return this.name + ": " + this.message;
+                    }
+
+                }
+
+            }
         });
 
-        var services = new mongoose.Schema({
-            ID: String,
-            details: String
+        Services.find({'service_id': ServiceID}, function (err, docs) {
+            if (docs.toString() == "") //Check if the Service exists
+            {
+                throw{
+                    name: "Service Non-existant",
+                    message: "The service specified doesn't exist",
+                    toString: function () {
+                        return this.name + ": " + this.message;
+                    }
+                }
+
+            }
         });
 
-        var restrictions = new mongoose.Schema({
-            ID: String,
-            buzzspace_id: [mongoose.Schema.Types.ObjectID],
-            servicesID: [mongoose.Schema.Types.ObjectID],
-            minimumRole: [mongoose.Schema.Types.ObjectID],
-            minimumStatusPoints: Number,
-            deleted: Boolean
+        Role.find({'role_id': role.role_id}, function (err, docs) {
+            if (docs.toString() == "") //Check if the Service exists
+            {
+                throw{
+                    name: "Invalid Role",
+                    message: "The selected role doesn't exist",
+                    toString: function () {
+                        return this.name + ": " + this.message;
+                    }
+                }
+
+            }
         });
 
-        //compile the schema to allow objects to be made of it
-        var Role = mongoose.model('Role', Roles);
-        var Service = mongoose.model('Service', services);
-        var Restriction = mongoose.model('Restriction', restrictions);
-
-        if (/*Condition*/false) //Check if the
+        if (statusPoints < 0) //Check if the minimum statuspoints is valid
         {
             throw{
-                name: "Name",
-                message: "Message details",
-                toString: function ()
-                {
+                name: "StatusPoints Invalid",
+                message: "The minimus status points are less than 0",
+                toString: function () {
                     return this.name + ": " + this.message;
                 }
             }
-            //DO SOME MORE STUFF
-            //general commenting
-            helperFunction(/*parameter*/);
-        }
-        else // Add the restriction to the DB
-        {
-            //this id will be unique for each buzzSpace and Service
-            var newID = buzzspaceID + ServiceID; //For now this will generate the id for restrictions...
 
-            Restriction.find({'ID': newID}, function (err, docs) {
-                if (docs.toString() == "") {
-                    var rest = new Restriction({
-                        'ID': newID,
-                        'buzzspace_id': buzzspaceID,
-                        'servicesID': ServiceID,
-                        'minimumRole': Role,
-                        'minimumStatusPoints': statusPoints,
-                        'deleted': false
-                    });
-                    rest.save(function (err, t) {
-                        if (err) return console.error(err)
-                    });
-                    console.log("inserted");
+        }
+
+
+
+        //this id will be unique for each buzzSpace and Service
+        var newID = buzzspaceID + ServiceID; //For now this will generate the id for restrictions...
+
+        ServiceRestriction.find({'restriction_id': newID}, function (err, docs) { //Check if the restriction exists
+            if (docs.toString() == "") {
+                var rest = new ServiceRestriction({
+                    'restriction_id': newID,
+                    'buzz_space_id': buzzspaceID,
+                    'service_id': ServiceID,
+                    'minimum_role': role.role_id,
+                    'minimum_status_points': statusPoints,
+                    'deleted': false
+                });
+                rest.save(function (err, t) {
+                    if (err) return console.error(err)
+                });
+                console.log("inserted");
+
+            }
+            else //restriction already exists
+            {
+
+                if (docs.deleted == true ) // change to false
+                {
+                    var query = { restriction_id: restrictionID };
+                    var options = { multi: false };
+                    var update =  { deleted: false };
+                    Restriction.update(query, { $set: update}, options , callback);
+                    function callback (error, numAffected){console.log("Set to true")}
                 }
-                else //restriction already exists
+                else
                 {
                     //Pre-conditon - authorization restriction for that role and buzzSpace don't exist.
                     throw{
                         name: "Restriction_Exists",
                         message: "The restriction for this service on the current buzz space already exists.",
-                        toString: function ()
-                        {
+                        toString: function () {
                             return this.name + ": " + this.message;
                         }
                     }
-
-
                 }
-            });
-        }
+
+
+            }
+
+        });
+
 
 
     }
@@ -123,41 +153,14 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
         }
     }
 
-    //Don't know if this is still needed??
-    exports.mongoose = mongoose;
-    module.exports.restrict = Restriction;
 
+    mongoose.disconnect();
 }
 
-//TODO Make a connection helper function and include it within the call of the AddAuthorization function
-//TODO All code outside of main function should either be placed in helper function or main code
-
-
-//testing to see if connection was successfull.
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-//TODO Use databasestuff schemas
-//creating schema
-
-
-
-
-//creating schema
-//TODO Use databasestuff schema
-
-//compile the schema to allow objects to be made of it
-
-
-//creating schema
-
-//compile the schema to allow objects to be made of it
-
 //function to addAuthorizationRestricions
-//TODO change parameters to buzzspaceName, statusPoints, role, objectName, objectMethod
-//TODO remember if deleted there is a flag
-function addAuthorizationRestrictions(buzzspaceID, statusPoints, Role, ServiceID) {
-    //...Creating models and database schemas... (starts here)
-    //TODO if ID in buzzspace schema is not updated to string let me know && use database stuff schemas
+
+
+
 
 
     //compile the schema to allow objects to be made of it
@@ -168,14 +171,12 @@ function addAuthorizationRestrictions(buzzspaceID, statusPoints, Role, ServiceID
 
 
 
-    //TODO Check if buzzSpace exists, objectName and Method exists. Throw errors if they don't exist.
-    //TODO Search database via buzzspaceName, objectName, objectMethod and throw relevant error
-    //TODO Remember to check if the deleted field is true
-
-}
 
 
-exports.add = addAuthorizationRestrictions;
+
+
+
+
 
 
 
