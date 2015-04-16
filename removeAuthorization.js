@@ -1,4 +1,3 @@
-//TODO use template class
 /**
  * @module buzzAuthorisation
  * @author AuthorisationB - Jessica Lessev
@@ -10,18 +9,13 @@
  * @param {String} buzzspaceName -  name of the buzz space for which Authorisation is being requested
  * @param {String} objectName - Fully qualified name of Service being requested
  * @param {String} objectMethod - method_name of Service 'objectName'.
- * @throws {type} Object of a certain type are not found in the database
- * @throws {Error} Object of a certain type is not found in the database
- * @throws {Error} Could not establish a connection to the database
+ * @throws {String} Object of a certain type are not found in the database
+ * @throws {String} Object of a certain type is not found in the database
+ * @throws {String} Could not establish a connection to the database
  */
 
 var mongoose = require("mongoose");
 
-//Main Function
-//TODO update the authorization delete value to false if not already false. If false ignore. - Done
-//TODO throw errors for instead of console logging errors. Console log regular outputs. - Done
-//TODO use database stuff schemas - Done
-//TODO remember if deleted there is a flag. - Done
 exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, objectName, objectMethod*/restrictionID)
 {
 	//Testing if database connection was successful
@@ -80,7 +74,6 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
 		var User = mongoose.model('users', UserSchema);
 
 		//find the user object from the userID
-		//console.log("ID : "+ID);
 		User.findOne({restriction_id: restrictionID}, function(err, _Res)
 		{
 			if (err)
