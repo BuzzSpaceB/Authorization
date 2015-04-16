@@ -15,7 +15,7 @@ var ServiceRestrictionSchema = mongoose.Schema({
     restriction_id              : String, /*buzz_id + service_id */
     buzz_space_id               : String,
     service_id                  : mongoose.Schema.ObjectId,
-    minimum_role                : mongoose.Schema.ObjectId,
+    minimum_role                : String,
     minimum_status_points       : Number,
     deleted                     : Boolean
 });
@@ -88,254 +88,208 @@ var User = mongoose.model('users', UserSchema);
 exports.isAuthorized = function isAuthorized(authorizedID, role, statusPoints)
 {
 
-    var connected = false;
-
-
-
-    //Testing if database connection was successful
-    var ServiceRestrictionSchema = new mongoose.Schema({
-        restriction_id: String,
-        buzz_space_id: [mongoose.Schema.Types.ObjectID],
-        service_id: [mongoose.Schema.Types.ObjectID],
-        minimum_role: [mongoose.Schema.Types.ObjectID],
-        minimum_status_points: Number,
-        deleted: Boolean
-    });
-    var Restriction = mongoose.model('servicerestrictions', ServiceRestrictionSchema);
-
-    //Connecting to the database
     mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
+    var db = null;
+    db = mongoose.connection;
 
-    var db = mongoose.connection;
     if (db != null)
     {
-        connected = true;
-    }
-
-    if (connected == true)
-    {
-
-        var RoleSchema = mongoose.Schema({
-            role_id         : String,           /* The id of the role */
-            name            : String,            /* The name of the role, as from LDAP */
-            role_weight     : Number            /* The weighting of the role, this is used for comparison of the roles*/
-        });
-        var Role = mongoose.model('roles', RoleSchema);
-
-        var ServiceSchema = mongoose.Schema({
-            service_id                  : ObjectId,
-            service_name                : String, /*Fully qualified service name */
-            method_name                 : String,
-            deleted                     : Boolean
-        });
-        var Service = mongoose.model('services', ServiceSchema);
-
-        var UserSchema = mongoose.Schema({
-            user_id             : String,           /* PK, this is the user_id as in LDAP i.e student number */
-            username            : String,           /* The user's preferred username, like first name */
-            roles               : [{role_name : [String], module: [String]}],      /* Array of Roles & modules of the user as from LDAP */
-            modules      		: [String],          /* Array of Modules that is active for the user */
-            post_count			: Number,
-            status_value        : Number
-        });
-
-        var User = mongoose.model('users', UserSchema);
-
-        //find the user object from the userID
-        User.findOne({user_id : userID}, function(err, _user){
-            if (err){
-                throw{
-                    name: "Error",
-                    message: err,
-                    toString: function(){
-                        return this.name + ": " + this.message;
-                    }
-                }
+        //checking the validity of the provided status points
+        if (statusPoints < 0)
+        {
+            throw{
+                name: "Error: ",
+                message: 'Status Points provided are invalid',
+                toString:    function(){return this.name + ": " + this.message;}
             }
-            else if (_user == null)
-            {
-                throw{
-                    name: "Object Not Found",
-                    message: 'Could not find User in database',
-                    toString: function(){
-                        return this.name + ": " + this.message;
-                    }
-                }
-            }
-            else
-            {
-                console.log("Found User with ID: "+_user.user_id);
-                for (var  i = 0;i < _user.roles.length; i++ )
+        }
+        else
+        {
+            //locating role object in database
+            Role.findOne({role_id: role}, function(err, _rol){
+
+                if (err)
                 {
-                    if (_user.roles[i].module == buzzspaceName) //User is registered for this buzz module
+                    throw{
+                        name: "Unauthorized User: ",
+                        message: err,
+                        toString:    function(){return this.name + ": " + this.message;}
+                    }
+                }
+                else if (_rol == null)
+                {
+                    throw{
+                        name: "Object not found: ",
+                        message: 'Specified Role does not exist in database',
+                        toString:    function(){return this.name + ": " + this.message;}
+                    }
+                }
+                else
+                {
+                    console.log(_rol.role_id);
+                    //locating restriction object in database
+                    ServiceRestriction.findOne({restriction_id: authorizedID}, function(err, rest)
                     {
-                        var userRole = _user.roles[i].role_name;
-                        console.log("User Role is: " + userRole + " for this module");
-                        //find the service object for the service being requested
-                        Service.findOne({method_name: objectMethod, service_name: objectName}, function (err, result)
+                        if (err)
                         {
-                            if (err)
+                            console.log(rest);
+                            throw{
+                                name: "Error",
+                                message: err,
+                                toString:    function(){return this.name + ": " + this.message;}
+                            }
+                        }
+
+                        else if (rest == null)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            Role.findOne({role_id :rest.minimum_role}, function(err, _role)
                             {
-                                throw{
-                                    name: "Error",
-                                    message: err,
-                                    toString: function(){
-                                        return this.name + ": " + this.message;
+                                if (err)
+                                {
+                                    throw{
+                                        name: "Error",
+                                        message: err,
+                                        toString:    function(){return this.name + ": " + this.message;}
                                     }
                                 }
-                            }
-                            else if (result == null)
-                            {
-                                throw{
-                                    name: "Object Not Found",
-                                    message: 'Could not locate Service in database',
-                                    toString: function(){
-                                        return this.name + ": " + this.message;
+
+                                else if (_role == null)
+                                {
+                                    throw{
+                                        name: "Object Not Found",
+                                        message: 'Could not locate role in database',
+                                        toString:    function(){return this.name + ": " + this.message;}
                                     }
                                 }
-                            }
-                            else
-                            {
-                                console.log("Found requested service object");
-                                var newID = buzzspaceName + result.service_id; //create the Restriction objects ID
 
-                                //find the restriction object for the requested service
-                                Restriction.findOne({restriction_id: newID}, function(err, rest){
-                                    if (err){
-                                        throw{
-                                            name: "Error",
-                                            message: err,
-                                            toString: function(){
-                                                return this.name + ": " + this.message;
-                                            }
-                                        }
-                                    }
-                                    else if (rest == null)
+                                else
+                                {
+                                    //switch statement comparing restriction minimum role to the user requesting the service's role
+                                    switch (_role)
                                     {
-                                        return true;
-                                    }
-                                    else
-                                    {
-                                        console.log("Restriction found. Analyzing...");
-
-                                        //find the restrictions minimumRole object
-                                        Role.findOne({_id : rest.minimum_role}, function (err, rol){
-                                            if (err){
-                                                throw{
-                                                    name: "Error",
-                                                    message: err,
-                                                    toString: function(){
-                                                        return this.name + ": " + this.message;
-                                                    }
-                                                }
-                                            }
-                                            else if (rol.toString() == "")
+                                        case 'lecturer':
+                                            if (role == 'lecturer')
                                             {
+                                                if (rest.minimum_status_points > statusPoints)
                                                 {
                                                     throw{
-                                                        name: "Object Not Found",
-                                                        message: "Role Not Found In Database",
-                                                        toString: function(){
-                                                            return this.name + ": " + this.message;
-                                                        }
+                                                        name: "Unauthorized User: ",
+                                                        message: 'User is unauthorized to use this service',
+                                                        toString:    function(){return this.name + ": " + this.message;}
                                                     }
+                                                }
+                                                else
+                                                {
+                                                    return true;
                                                 }
                                             }
                                             else
                                             {
-                                                //test user role against restriction minimum role to see if user is authorised
-                                                switch (rol.name) {
-                                                    case 'lecturer' :
-                                                        if (userRole != 'lecturer')
-                                                        {
-                                                            throw{
-                                                                name: "Unauthorized Error",
-                                                                message: "User is unauthorized to use this service.",
-                                                                toString:    function(){return this.name + ": " + this.message;}
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            return true;
-                                                        }
-                                                        break;
-                                                    case 'teachingAssistant' :
-                                                        if (userRole == 'tutor' || userRole == 'student')
-                                                        {
-                                                            throw{
-                                                                name: "Unauthorized Error",
-                                                                message: "User is unauthorized to use this service.",
-                                                                toString:    function(){return this.name + ": " + this.message;}
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            return true;
-                                                        }
-                                                        break;
-                                                    case 'tutor' :
-                                                        if (userRole == 'student')
-                                                        {
-                                                            throw{
-                                                                name: "Unauthorized Error",
-                                                                message: "User is unauthorized to use this service.",
-                                                                toString:    function(){return this.name + ": " + this.message;}
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            return true;
-                                                        }
-                                                        break;
-                                                    case 'student' :
-                                                        if (userRole == 'student')
-                                                        {
-                                                            if (statusPoints < rest.minimum_status_points)
-                                                            {
-                                                                throw{
-                                                                    name: "Unauthorized Error",
-                                                                    message: "User is unauthorized to use this service.",
-                                                                    toString:    function(){return this.name + ": " + this.message;}
-                                                                }
-                                                            }
-                                                            else
-                                                            {
-                                                                return true;
-                                                            }
-
-                                                        }
-                                                        break;
-                                                    default :
-                                                        throw{
-                                                            name: "Unauthorized Error",
-                                                            message: "User is unauthorized to use this service.",
-                                                            toString:    function(){return this.name + ": " + this.message;}
-                                                        }
+                                                throw{
+                                                    name: "Unauthorized User: ",
+                                                    message: 'User is unauthorized to use this service',
+                                                    toString:    function(){return this.name + ": " + this.message;}
                                                 }
-
                                             }
-
-
-                                        });
-
+                                            break;
+                                        case 'teachingAssistant':
+                                            if (role == 'student' || role == 'tutor')
+                                            {
+                                                throw{
+                                                    name: "Unauthorized User: ",
+                                                    message: 'User is unauthorized to use this service',
+                                                    toString:    function(){return this.name + ": " + this.message;}
+                                                }
+                                            }
+                                            else if (role == 'teachingAssistant')
+                                            {
+                                                if (rest.minimum_status_points > statusPoints)
+                                                {
+                                                    throw{
+                                                        name: "Unauthorized User: ",
+                                                        message: 'User is unauthorized to use this service',
+                                                        toString:    function(){return this.name + ": " + this.message;}
+                                                    }
+                                                }
+                                                else
+                                                    return true;
+                                            }
+                                            else
+                                                return true;
+                                            break;
+                                        case 'tutor':
+                                            if (role == 'student')
+                                            {
+                                                throw{
+                                                    name: "Unauthorized User: ",
+                                                    message: 'User is unauthorized to use this service',
+                                                    toString:    function(){return this.name + ": " + this.message;}
+                                                }
+                                            }
+                                            else if (role == 'tutor')
+                                            {
+                                                if (rest.minimum_status_points > statusPoints)
+                                                {
+                                                    throw{
+                                                        name: "Unauthorized User: ",
+                                                        message: 'User is unauthorized to use this service',
+                                                        toString:    function(){return this.name + ": " + this.message;}
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    return true;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                return true;
+                                            }
+                                            break;
+                                        case 'student':
+                                            if (role == 'student')
+                                            {
+                                                if (rest.minimum_status_points > statusPoints)
+                                                {
+                                                    throw{
+                                                        name: "Unauthorized User: ",
+                                                        message: 'User is unauthorized to use this service',
+                                                        toString:    function(){return this.name + ": " + this.message;}
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    return true;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                return true;
+                                            }
+                                            break;
+                                        default:
+                                            throw{
+                                                name: "Unauthorized User: ",
+                                                message: 'User is unauthorized to use this service',
+                                                toString:    function(){return this.name + ": " + this.message;}
+                                            }
+                                            break;
                                     }
-                                });
-                            }
-                        });
-                    }
+                                }
+                            });
+
+                        }
+                    });
                 }
-            }
-        });
-    }
-    else
-    {
-        throw{
-            name: "Connection Error",
-            message: "Could not establish a connection to the database.",
-            toString:    function(){return this.name + ": " + this.message;}
+
+            });
         }
     }
-    mongoose.disconnect();
+
 };
 
 
@@ -402,7 +356,7 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                                     return false;
                                 }
 
-                                Role.find({'role_id': role.role_id}, function (err, docs) {
+                                Role.find({'role_id': role}, function (err, docs) {
                                     if (docs.toString() == "") //Check if the Service exists
                                     {
                                         throw{
