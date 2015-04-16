@@ -364,13 +364,12 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
     var mongoose = require("mongoose");
 //Connecting to the database
     function con(database) { // Connection helper function
-
         mongoose.connect(database);
         return mongoose.connection;
     }
+    
     var dbAddress = "mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib";
     var db = con(dbAddress);
-
 
         if (db != null) //check if connection succeeded
         {
@@ -512,7 +511,6 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 
 //////////////////////////////////////////// removeAuthorisation ///////////////////////////////////////
 
-//TODO use template class
 /**
  * @module buzzAuthorisation
  * @author AuthorisationB - Jessica Lessev
@@ -532,25 +530,9 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 var mongoose = require("mongoose");
 
 //Main Function
-//TODO update the authorization delete value to false if not already false. If false ignore. - Done
-//TODO throw errors for instead of console logging errors. Console log regular outputs. - Done
-//TODO use database stuff schemas - Done
-//TODO remember if deleted there is a flag. - Done
 exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, objectName, objectMethod*/restrictionID)
 {
     //Testing if database connection was successful
-    var ServiceRestrictionSchema = new mongoose.Schema(
-        {
-            restriction_id: String,
-            buzz_space_id: [mongoose.Schema.Types.ObjectID],
-            service_id: [mongoose.Schema.Types.ObjectID],
-            minimum_role: [mongoose.Schema.Types.ObjectID],
-            minimum_status_points: Number,
-            deleted: Boolean
-        });
-
-    var Restriction = mongoose.model('servicerestrictions', ServiceRestrictionSchema);
-
     //Connecting to the database
     mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
 
@@ -567,35 +549,9 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
 
     if (connected == true)
     {
-        var RoleSchema = mongoose.Schema({
-            role_id         : String,           /* The id of the role */
-            name            : String,            /* The name of the role, as from LDAP */
-            role_weight     : Number            /* The weighting of the role, this is used for comparison of the roles*/
-        });
-        var Role = mongoose.model('roles', RoleSchema);
-
-        var ServiceSchema = mongoose.Schema({
-            service_id                  : ObjectId,
-            service_name                : String, /*Fully qualified service name */
-            method_name                 : String,
-            deleted                     : Boolean
-        });
-        var Service = mongoose.model('services', ServiceSchema);
-
-        var UserSchema = mongoose.Schema({
-            user_id             : String,           /* PK, this is the user_id as in LDAP i.e student number */
-            username            : String,           /* The user's preferred username, like first name */
-            roles               : [{role_name : [String], module: [String]}],      /* Array of Roles & modules of the user as from LDAP */
-            modules      		: [String],          /* Array of Modules that is active for the user */
-            post_count			: Number,
-            status_value        : Number
-        });
-
-        var User = mongoose.model('users', UserSchema);
-
         //find the user object from the userID
         //console.log("ID : "+ID);
-        User.findOne({restriction_id: restrictionID}, function(err, _Res)
+        ServiceRestriction.findOne({restriction_id: restrictionID}, function(err, _Res)
         {
             if (err)
             {
@@ -632,7 +588,7 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
                     var options = { multi: false };
                     var update =  { deleted: true };
 
-                    Restriction.update(query, { $set: update}, options , callback);
+                    ServiceRestriction.update(query, { $set: update}, options , callback);
 
                     function callback (error, numAffected)
                     {
@@ -651,7 +607,6 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
             toString:    function(){return this.name + ": " + this.message;}
         }
     }
-    mongoose.disconnect();
 };
 
 /////////////////////////////////////////////// updateAuthorization ///////////////////////////////////////////
