@@ -1,9 +1,13 @@
 function main ()
 {
+    var mongoose = require("mongoose");
+    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
   // var addAuth = require('./AddAuthorization.js');
   // var isAuth = require('./isAuthorized.js');
     var Auth = require('./Authorized.js');
 
+
+    Auth.isAuthorized('COS301552fd20b05ab44fc2574f247','lecturer',50);
    //var remAuth = require('./removeAuthorization.js');
 
     //Create object of type removeAuthorisation
