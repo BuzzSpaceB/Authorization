@@ -327,9 +327,9 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 
         if (db != null) //check if connection succeeded
         {
-                function pretests()//this function tests for the 4 other prerequisites that needs to be met.
-                {
-                        BuzzSpace.find({'module_id': buzzspaceID}, function (err, docs) {
+                //function pretests()//this function tests for the 4 other prerequisites that needs to be met.
+                //{
+                    BuzzSpace.find({'module_id': buzzspaceID}, function (err, docs) {
                         if (docs.toString() == "") //Check if the Service exists
                         {
                             throw{
@@ -343,12 +343,26 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                             return false;
                         }
 
-                            Services.find({'service_id': ServiceID}, function (err, docs) {
+                        Services.find({'service_id': ServiceID}, function (err, docs) {
+                            if (docs.toString() == "") //Check if the Service exists
+                            {
+                                throw{
+                                    name: "Service Non-existant",
+                                    message: "The service specified doesn't exist",
+                                    toString: function () {
+                                        return this.name + ": " + this.message;
+                                    }
+                                }
+                                return false;
+                            }
+
+                            Role.find({'role_id': role}, function (err, docs) {
                                 if (docs.toString() == "") //Check if the Service exists
                                 {
+                                    //console.log(role);
                                     throw{
-                                        name: "Service Non-existant",
-                                        message: "The service specified doesn't exist",
+                                        name: "Invalid Role",
+                                        message: "The selected role doesn't exist",
                                         toString: function () {
                                             return this.name + ": " + this.message;
                                         }
@@ -356,42 +370,31 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                                     return false;
                                 }
 
-                                Role.find({'role_id': role}, function (err, docs) {
-                                    if (docs.toString() == "") //Check if the Service exists
-                                    {
-                                        throw{
-                                            name: "Invalid Role",
-                                            message: "The selected role doesn't exist",
-                                            toString: function () {
-                                                return this.name + ": " + this.message;
-                                            }
+                                if (statusPoints < 0) //Check if the minimum statuspoints is valid
+                                {
+                                    throw{
+                                        name: "StatusPoints Invalid",
+                                        message: "The minimus status points are less than 0",
+                                        toString: function () {
+                                            return this.name + ": " + this.message;
                                         }
-                                        return false;
                                     }
-
-                                    if (statusPoints < 0) //Check if the minimum statuspoints is valid
-                                    {
-                                        throw{
-                                            name: "StatusPoints Invalid",
-                                            message: "The minimus status points are less than 0",
-                                            toString: function () {
-                                                return this.name + ": " + this.message;
-                                            }
-                                        }
-                                        return false;
-                                    }
-                                    else{return true;}
-
-                                });
+                                    return false;
+                                }
+                                else {
+                                    continueOn();
+                                }
 
                             });
+
+                        });
 
                     });
 
 
-                }
+                //}
 
-            if (pretests())
+            function continueOn()
             {
                 //this id will be unique for each buzzSpace and Service
                 var newID = buzzspaceID + ServiceID; //For now this will generate the id for restrictions...
@@ -402,13 +405,13 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
                             'restriction_id': newID,
                             'buzz_space_id': buzzspaceID,
                             'service_id': ServiceID,
-                            'minimum_role': role.role_id,
+                            'minimum_role': role,
                             'minimum_status_points': statusPoints,
                             'deleted': false
                         });
                         rest.save(function (err, t) {
                             if (err) return console.error(err)
-
+                            console.log("inserted");
                         });
 
 
@@ -443,8 +446,6 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 
                 });
             }
-            else
-            {console.log("prerequisites weren't met")}
 
 
         }
@@ -481,14 +482,14 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
  * @throws {Error} Could not establish a connection to the database
  */
 
-var mongoose = require("mongoose");
+//var mongoose = require("mongoose");
 
 //Main Function
 exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, objectName, objectMethod*/restrictionID)
 {
     //Testing if database connection was successful
     //Connecting to the database
-    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
+   // mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
 
     var db = mongoose.connection;
     if (db != null)
@@ -499,7 +500,6 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
     {
         connected = false;
     }
-
 
     if (connected == true)
     {

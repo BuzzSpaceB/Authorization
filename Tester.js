@@ -1,13 +1,13 @@
 function main ()
 {
-    var mongoose = require("mongoose");
-    mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
+   // var mongoose = require("mongoose");
+    //mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
   // var addAuth = require('./AddAuthorization.js');
   // var isAuth = require('./isAuthorized.js');
     var Auth = require('./Authorized.js');
 
 
-    Auth.isAuthorized('COS301552fd20b05ab44fc2574f247','lecturer',50);
+    //Auth.isAuthorized('COS301552fd20b05ab44fc2574f247','lecturer',50);
    //var remAuth = require('./removeAuthorization.js');
 
     //Create object of type removeAuthorisation
@@ -35,21 +35,21 @@ function main ()
         'deleted': false
     });*/
 
-    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,10);
-    Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f247',role1,15);
-    Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f243',role1,9);
+    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245','552fb83fa23b2958293e73d6',10);
+  // Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f247',role1.role_id,15);
+    //Auth.addAuthorizationRestrictions("COS301",'552fd20b05ab44fc2574f243',role1.role_id,9);
 
     //buzzSpace doesn't exist exception
-    Auth.addAuthorizationRestrictions("COS302",'552fd20b05ab44fc2574f245',role1,10);
+   // Auth.addAuthorizationRestrictions("COS302",'552fd20b05ab44fc2574f245',role1.role_id,10);
 
     //Service Doesn't exist exception
-    Auth.addAuthorizationRestrictions("COS332",'552323d20b05ab44fc2574f2',role1,10);
+   // Auth.addAuthorizationRestrictions("COS332",'552323d20b05ab44fc2574f2',role1.role_id,10);
 
     //invalid role exception
-    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245','552fd20b05ab44fc2574f243',10);
+   // Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245','552fd20b05ab44fc2574f243',10);
 
     //invalid statuspoints exception
-    Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role1,-1);
+   // Auth.addAuthorizationRestrictions("COS332",'552fd20b05ab44fc2574f245',role_id,-1);
 
 }
 
