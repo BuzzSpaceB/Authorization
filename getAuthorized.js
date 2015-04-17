@@ -49,28 +49,11 @@ function checkConnection(){
 }
 
 //Actual Function - get all the restrictions for a specific BuzzSpace.
-//TODO throw errors for errors(Don't console log them)
-//TODO check if objects all exists && check if restriction exists. Throw relevant errors.
-//TODO use databasestuff schemas
-//TODO use helper functions where possible(Simpilify reading of code);
-//TODO remember if deleted there is a flag.
 function getAut(bID){
     //TODO create connect helper function
     mongoose = require("mongoose");
     mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
     var connect =  checkConnection();
-    //TODO use database stuff for schemas
-    //Testing Purposes - Can be removed later.
-    //var restrictions = new mongoose.Schema(
-    //    {
-    //        ID: String,
-    //        buzzspace_id: [mongoose.Schema.Types.ObjectID],
-    //        servicesID: [mongoose.Schema.Types.ObjectID],
-    //        minimumRole: [mongoose.Schema.Types.ObjectID],
-    //        minimumStatusPoints: Number,
-    //        deleted: Boolean
-    //    });
-    //console.log("connect");
 
     var ServiceRestrictionSchema = new mongoose.Schema(
         {

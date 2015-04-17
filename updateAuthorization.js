@@ -14,7 +14,7 @@
  * @throws {String} Could not establish a connection to the database
  */
 
-//    TODO Use templates provided
+
 var authID;
 var rol;
 var statPoints;
@@ -96,11 +96,7 @@ function checkValues(rle,stat){
 }
 
 //Actual Function - update Authorization
-//TODO update parameteres to : buzzspaceName, statusPoints, role, objectName, objectMethod, newRole, newStatusPoints
-//TODO check if objects all exists && check if restriction exists. Throw relevant errors.
-//TODO remember if deleted there is a flag.
-//TODO use databasestuff schemas
-//TODO use helper functions where possible(Simpilify reading of code);
+
 function updateAuthorization(aID, rl, sP){
     mongoose = require("mongoose");
     mongoose.connect("mongodb://d3user:DdJXhhsd2@proximus.modulusmongo.net:27017/purYv9ib");
@@ -118,17 +114,7 @@ function updateAuthorization(aID, rl, sP){
             deleted: Boolean
         });
 
-    //var restrictions = mongoose.model('servicerestrictions', ServiceRestrictionSchema);
-    //var restrictions = new mongoose.Schema(
-    //    {
-    //        ID: String,
-    //        buzzspace_id: [mongoose.Schema.Types.ObjectID],
-    //        servicesID: [mongoose.Schema.Types.ObjectID],
-    //        minimumRole: [mongoose.Schema.Types.ObjectID],
-    //        minimumStatusPoints: Number,
-    //        deleted: Boolean
-    //    });
-    //console.log("connect");
+
 
     if (connect == true) {
         setNewParameters(aID, rl, sP);
