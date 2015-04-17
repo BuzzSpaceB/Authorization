@@ -1,9 +1,21 @@
 /**
- * Created by Kale-ab on 2015-04-01.
+ * @module buzzAuthorisation
+ * @author AuthorisationB - Kale-ab Tessera
+ * @version 0.2
  */
 
-//TODO Use the template class
-
+/**
+ * This function returns all the restrictions linked to BuzzSpace, in the form of a JSON string.
+ * @param {String} buzzSpaceID -  ID of the BuzzSpace chosen.
+ * @throws {String} BuzzSpace wasn't found.
+ * @throws {String} Could not establish a connection to the database
+ * @return {JSON String} Returns a JSON string in the format "{_v: 0, restriction_id: [''],
+            buzz_space_id: [''],
+            service_id: [''],
+            minimum_role: [''],
+            minimum_status_points: int,
+            deleted: true/false ", end of first restriction ... ... ... }"
+ */
 // Defining the class
 function getAuthorization(buzzSpaceID)
 {
@@ -49,29 +61,45 @@ function getAut(bID){
     var connect =  checkConnection();
     //TODO use database stuff for schemas
     //Testing Purposes - Can be removed later.
-    var restrictions = new mongoose.Schema(
+    //var restrictions = new mongoose.Schema(
+    //    {
+    //        ID: String,
+    //        buzzspace_id: [mongoose.Schema.Types.ObjectID],
+    //        servicesID: [mongoose.Schema.Types.ObjectID],
+    //        minimumRole: [mongoose.Schema.Types.ObjectID],
+    //        minimumStatusPoints: Number,
+    //        deleted: Boolean
+    //    });
+    //console.log("connect");
+
+    var ServiceRestrictionSchema = new mongoose.Schema(
         {
-            ID: String,
-            buzzspace_id: [mongoose.Schema.Types.ObjectID],
-            servicesID: [mongoose.Schema.Types.ObjectID],
-            minimumRole: [mongoose.Schema.Types.ObjectID],
-            minimumStatusPoints: Number,
+            restriction_id: String,
+            buzz_space_id: [mongoose.Schema.Types.ObjectID],
+            service_id: [mongoose.Schema.Types.ObjectID],
+            minimum_role: [mongoose.Schema.Types.ObjectID],
+            minimum_status_points: Number,
             deleted: Boolean
         });
-    //console.log("connect");
     //TODO check if database exists
     if (connect == true) {
+        var restrictions = mongoose.model('servicerestrictions', ServiceRestrictionSchema);
         setID(bID);
 
-        var Restriction2 = mongoose.model('Restriction', restrictions);
+        //var Restriction2 = mongoose.model('Restriction', restrictions);
         //Looks for a BuzzSpace with the matching ID AND deleted = false
-        Restriction2.find({'buzzspace_id': bID,'deleted':false}, function (err, docs)
+        restrictions.find({'buzz_space_id': bID,'deleted':false}, function (err, docs)
         {
             //if (err) return console.error(err);
             //TODO throw an error instead of console logging
             if (docs.toString() == "")
             {
-                console.log("A buzzSpace with that Specified ID doesnt exist.");
+                throw{
+                    name: "BuzzSpace Error",
+                    message: "BuzzSpace with that ID was not found or it was deleted.",
+                    toString:    function(){return this.name + ": " + this.message;}
+                }
+                return null;
             }
             else{
 
@@ -81,9 +109,14 @@ function getAut(bID){
             }
 
         });
+        mongoose.disconnect();
     }
     else {
-        console.log("Error connection failed.");
+        throw{
+            name: "Connection Error",
+            message: "Could not establish a connection to the database.",
+            toString:    function(){return this.name + ": " + this.message;}
+        }
     }
 }
 
