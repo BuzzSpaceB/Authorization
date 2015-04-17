@@ -24,7 +24,6 @@ with the database objects service, role and buzzspace.
 *Pre-conditions: 
 	-The user, within a specific buzzspace must request or attempt to use a specific service.
 	-The user has to have some form of status within the system
-	-The user must attempt to use the specific service from a specific buzzspace.
 	-The service the user is attemting to use must be clearly identified.
 	
 *Post-conditions:
