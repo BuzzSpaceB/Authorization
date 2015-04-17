@@ -474,9 +474,7 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 
 /**
  * Removes a users ability to use a specific service by setting a deleted flag to false.
- * @param {String} buzzspaceName -  name of the buzz space for which Authorisation is being requested
- * @param {String} objectName - Fully qualified name of Service being requested
- * @param {String} objectMethod - method_name of Service 'objectName'.
+ * @param {String} restrictionID -  name of the buzz space for which Authorisation is being requested.
  * @throws {type} Object of a certain type are not found in the database
  * @throws {Error} Object of a certain type is not found in the database
  * @throws {Error} Could not establish a connection to the database
@@ -485,7 +483,7 @@ exports.addAuthorizationRestrictions = function addAuthorizationRestrictions(buz
 //var mongoose = require("mongoose");
 
 //Main Function
-exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, objectName, objectMethod*/restrictionID)
+exports.removeAuthorization = function removeAuthorization(restrictionID)
 {
     //Testing if database connection was successful
     //Connecting to the database
@@ -533,22 +531,22 @@ exports.removeAuthorization = function removeAuthorization(/*buzzspaceName, obje
             {
                 if (_Res.deleted == false)
                 {
+			 //Defining parameters to update deleted field
+			    var query = { restriction_id: restrictionID };
+			    var options = { multi: false };
+			    var update =  { deleted: true };
 
+			    ServiceRestriction.update(query, { $set: update}, options , callback);
+
+			    function callback (error, numAffected)
+			    {
+				// numAffected is the number of updated documents - should be 1
+				//console.log("Num Affected: " + numAffected);
+			    }
                 }
                 else
                 {
-                    //Defining parameters to update deleted field
-                    var query = { restriction_id: restrictionID };
-                    var options = { multi: false };
-                    var update =  { deleted: true };
-
-                    ServiceRestriction.update(query, { $set: update}, options , callback);
-
-                    function callback (error, numAffected)
-                    {
-                        // numAffected is the number of updated documents - should be 1
-                        //console.log("Num Affected: " + numAffected);
-                    }
+                   
                 }
             }
        });
