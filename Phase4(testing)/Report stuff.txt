@@ -1,0 +1,43 @@
+1) Functional Testing:
+======
+#addAuthorizationRestrictions: (addAuthorization)
+
+The domain model for buzzAuthorization specifies that a restriction is made 
+for a particular user role on a specific buzz space.
+This is not the case in Authentication B's addAuthorizationRestrictions, 
+a Restriction is instead added to a specific service on a buzzSpace with a
+role and minimum status points.
+
+Even though this works just fine it is not according to the master 
+specification.
+
+the Restriction constists of a buzzSpace,role,serviceID and 
+minimumStatusPoints which adheres to the specification.
+======
+
+======
+Pre-conditions:
+*User adding the restriction has admin rights - This was not met in
+this service, because the service doesn't test for the condition at all.
+*The restriction does not yet exist - this pre-condition is met in the service
+it tests if the restriction exists and if so an appropriate exception is thrown,
+if not then the restriction specified is added/persisted to the database after a few 
+conditions are met.
+======
+
+======
+Post-conditions:
+*The restriction persisted, this condition is met when all the pre-conditions in 
+the service are met (those specified in the master spec and those that are not),
+then the restriction is persisted to the database.
+======
+
+2) Non-Functional testing/assesment.
+======
+Performance:
+Scalability:
+Maintainability:
+Reliability:
+Usability:
+
+
